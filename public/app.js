@@ -586,6 +586,14 @@ window.saveConfig = async function(e) {
   else toast(res?.error || 'Save failed', 'error');
 };
 
+window.showMcpConfig = async function() {
+  const el = document.getElementById('mcp-config');
+  const cfg = await api('/api/plugins/mcp-config');
+  if (!cfg) return;
+  el.textContent = JSON.stringify(cfg, null, 2);
+  el.hidden = false;
+};
+
 // ── Init ──
 refreshDashboard();
 refreshServices();

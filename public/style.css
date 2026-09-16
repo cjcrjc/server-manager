@@ -590,3 +590,9 @@ nav button.active { color: var(--accent); border-color: var(--accent); backgroun
   font-family: inherit; font-size: 0.85rem;
 }
 .cfg-field small { display: block; margin-top: 0.25rem; color: var(--muted); font-size: 0.75rem; }
+.code-block {
+  margin-top: 0.6rem; padding: 0.6rem; background: var(--bg);
+  border: 1px solid var(--border); border-radius: 5px;
+  font-size: 0.72rem; overflow-x: auto; white-space: pre; color: var(--fg);
+}
+.code-block[hidden] { display: none; }

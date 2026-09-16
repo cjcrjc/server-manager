@@ -59,6 +59,15 @@
         <div class="plugin-list" id="registry-plugins"></div>
       </div>
       <div class="card">
+        <h2>MCP Client Config</h2>
+        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem">
+          Paste into <code>~/.claude.json</code> or your MCP client. Credentials are inlined,
+          so treat it as a secret.
+        </p>
+        <button class="btn btn-sm" onclick="showMcpConfig()">Show config</button>
+        <pre id="mcp-config" class="code-block" hidden></pre>
+      </div>
+      <div class="card">
         <h2>Install from Source</h2>
         <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem">
           Git URL, local path, or npm:package-name

@@ -121,6 +121,11 @@ async function handleAPI(req, res, url) {
     return json(res, plugins.statusAll());
   }
 
+  // GET /api/plugins/mcp-config  (paste-ready mcpServers block)
+  if (method === 'GET' && url === '/api/plugins/mcp-config') {
+    return json(res, plugins.mcpConfig());
+  }
+
   // GET /api/plugins/:id/config
   if ((params = match(method, url, ['GET', '/api/plugins/:id/config']))) {
     try {

@@ -5,7 +5,12 @@
       "name": "Google Workspace",
       "description": "Google Calendar, Gmail, Drive, Docs MCP server",
       "source": "template:google",
-      "tags": ["google", "calendar", "gmail", "drive"],
+      "tags": [
+        "google",
+        "calendar",
+        "gmail",
+        "drive"
+      ],
       "multiAccount": true
     },
     {
@@ -13,7 +18,12 @@
       "name": "iCloud",
       "description": "iCloud Calendars & Reminders via CalDAV",
       "source": "template:icloud",
-      "tags": ["icloud", "apple", "calendar", "reminders"],
+      "tags": [
+        "icloud",
+        "apple",
+        "calendar",
+        "reminders"
+      ],
       "multiAccount": true
     },
     {
@@ -21,7 +31,12 @@
       "name": "Waterloo LEARN (D2L)",
       "description": "Waterloo LEARN course data, assignments, grades MCP",
       "source": "template:d2l",
-      "tags": ["d2l", "learn", "university", "courses"],
+      "tags": [
+        "d2l",
+        "learn",
+        "university",
+        "courses"
+      ],
       "multiAccount": true
     },
     {
@@ -29,8 +44,43 @@
       "name": "Microsoft OneDrive",
       "description": "Microsoft OneDrive file access and management via Graph API",
       "source": "npm:ms-onedrive-mcp",
-      "tags": ["onedrive", "microsoft", "files", "storage"],
-      "multiAccount": true
+      "tags": [
+        "onedrive",
+        "microsoft",
+        "files",
+        "storage"
+      ],
+      "multiAccount": true,
+      "env": [
+        {
+          "key": "MICROSOFT_CLIENT_ID",
+          "label": "Entra App Client ID",
+          "description": "Application (client) ID of your Microsoft Entra ID app registration",
+          "required": true,
+          "secret": false
+        },
+        {
+          "key": "MICROSOFT_TENANT_ID",
+          "label": "Tenant ID",
+          "description": "Directory (tenant) ID, or 'common' for personal accounts",
+          "required": false,
+          "secret": false
+        },
+        {
+          "key": "MICROSOFT_ACCESS_TOKEN",
+          "label": "Access Token (optional)",
+          "description": "Pre-acquired Graph token; skips interactive sign-in",
+          "required": false,
+          "secret": true
+        },
+        {
+          "key": "MICROSOFT_MCP_CACHE_DIR",
+          "label": "Token Cache Dir",
+          "description": "Where this instance stores its signed-in token cache. Use a distinct path per account.",
+          "required": false,
+          "secret": false
+        }
+      ]
     }
   ]
 }

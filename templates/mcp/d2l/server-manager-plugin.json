@@ -34,6 +34,20 @@
       "description": "Active secure session cookie",
       "required": false,
       "secret": true
+    },
+    {
+      "key": "LEARN_ICAL_URL",
+      "label": "LEARN Calendar Feed URL",
+      "description": "Personal iCal subscription URL from LEARN, used for due dates",
+      "required": false,
+      "secret": true
+    },
+    {
+      "key": "NTFY_TOPIC",
+      "label": "ntfy Topic",
+      "description": "Optional ntfy topic for assignment notifications",
+      "required": false,
+      "secret": false
     }
   ],
   "tags": ["d2l", "learn", "university", "courses"],
