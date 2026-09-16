@@ -1,0 +1,24 @@
+{
+  "id": "google-mcp",
+  "name": "Google Workspace",
+  "description": "Google Calendar, Gmail, Drive, Docs MCP server",
+  "version": "1.0.0",
+  "type": "mcp-stdio",
+  "entry": "server.mjs",
+  "install": "npm install",
+  "env": [
+    {
+      "key": "GOOGLE_ACCOUNTS",
+      "label": "Google Account Mapping",
+      "description": "e.g. personal:user@gmail.com or default:me",
+      "required": true,
+      "secret": false,
+      "default": "personal:user@gmail.com"
+    }
+  ],
+  "tags": ["google", "calendar", "gmail", "drive"],
+  "claude_config": {
+    "command": "node",
+    "args": ["server.mjs"]
+  }
+}

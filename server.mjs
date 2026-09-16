@@ -116,6 +116,30 @@ async function handleAPI(req, res, url) {
     }
   }
 
+  // GET /api/plugins/status
+  if (method === 'GET' && url === '/api/plugins/status') {
+    return json(res, plugins.statusAll());
+  }
+
+  // GET /api/plugins/:id/config
+  if ((params = match(method, url, ['GET', '/api/plugins/:id/config']))) {
+    try {
+      return json(res, { ...plugins.getConfig(params.id), status: plugins.status(params.id) });
+    } catch (e) {
+      return json(res, { error: e.message }, 404);
+    }
+  }
+
+  // POST /api/plugins/:id/config
+  if ((params = match(method, url, ['POST', '/api/plugins/:id/config']))) {
+    try {
+      const body = await readBody(req);
+      return json(res, { ok: true, status: plugins.setConfig(params.id, body) });
+    } catch (e) {
+      return json(res, { error: e.message }, 500);
+    }
+  }
+
   // POST /api/plugins/:id/remove
   if ((params = match(method, url, ['POST', '/api/plugins/:id/remove']))) {
     try {
@@ -177,6 +201,24 @@ async function handleAPI(req, res, url) {
       return json(res, conns);
     } catch (e) {
       return json(res, { error: e.message }, 502);
+    }
+  }
+
+  // POST /api/9router/policy/settings
+  if (method === 'POST' && url === '/api/9router/policy/settings') {
+    try {
+      const body = await readBody(req);
+      const updated = ninerouter.setQuotaPolicySettings(body);
+      // Run policy update script non-blockingly or via child_process to recompute combo orders
+      try {
+        const { exec } = await import('node:child_process');
+        exec('/home/cam/.local/bin/9router-quota-policy', (err) => {
+          if (err) console.warn('quota-policy run error:', err.message);
+        });
+      } catch {}
+      return json(res, { ok: true, settings: updated });
+    } catch (e) {
+      return json(res, { error: e.message }, 500);
     }
   }
 

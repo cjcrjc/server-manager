@@ -1,0 +1,44 @@
+{
+  "id": "d2l-mcp",
+  "name": "Waterloo LEARN (D2L)",
+  "description": "Waterloo LEARN course data, assignments, grades MCP",
+  "version": "1.0.0",
+  "type": "mcp-stdio",
+  "entry": "server.mjs",
+  "install": "npm install",
+  "env": [
+    {
+      "key": "WATERLOO_USERNAME",
+      "label": "WatIAM Username",
+      "description": "Your 8-character Quest/LEARN username",
+      "required": false,
+      "secret": false
+    },
+    {
+      "key": "WATERLOO_PASSWORD",
+      "label": "WatIAM Password",
+      "description": "Used for automated Duo login",
+      "required": false,
+      "secret": true
+    },
+    {
+      "key": "d2lSessionVal",
+      "label": "D2L Session Cookie",
+      "description": "Active session cookie from browser if not using password",
+      "required": false,
+      "secret": true
+    },
+    {
+      "key": "d2lSecureSessionVal",
+      "label": "D2L Secure Session Cookie",
+      "description": "Active secure session cookie",
+      "required": false,
+      "secret": true
+    }
+  ],
+  "tags": ["d2l", "learn", "university", "courses"],
+  "claude_config": {
+    "command": "node",
+    "args": ["server.mjs"]
+  }
+}

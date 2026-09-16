@@ -88,13 +88,6 @@
         </div>
       </div>
       <div class="card">
-        <h2>Available Models</h2>
-        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem">
-          Drag models from here into tiers above
-        </p>
-        <div id="router-models" class="model-pool"></div>
-      </div>
-      <div class="card">
         <h2>Provider Connections</h2>
         <div id="router-connections"></div>
       </div>
@@ -110,6 +103,22 @@
         <h2>Server Info</h2>
         <div id="server-info" style="font-size:0.85rem;color:var(--muted)"></div>
       </div>
+    </div>
+  </div>
+
+  <div id="cfg-modal" class="modal" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="cfg-title">
+      <div class="modal-header">
+        <h2 id="cfg-title">Configure</h2>
+        <button class="btn btn-sm" onclick="closeConfig()" aria-label="Close">✕</button>
+      </div>
+      <form id="cfg-form" onsubmit="saveConfig(event)">
+        <div id="cfg-fields"></div>
+        <div class="modal-footer">
+          <button type="submit" class="btn">Save</button>
+          <button type="button" class="btn btn-sm" onclick="closeConfig()">Cancel</button>
+        </div>
+      </form>
     </div>
   </div>
 

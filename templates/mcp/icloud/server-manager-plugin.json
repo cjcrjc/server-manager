@@ -1,0 +1,30 @@
+{
+  "id": "icloud-mcp",
+  "name": "iCloud",
+  "description": "iCloud Calendars & Reminders via CalDAV",
+  "version": "1.0.0",
+  "type": "mcp-stdio",
+  "entry": "server.mjs",
+  "install": "npm install",
+  "env": [
+    {
+      "key": "ICLOUD_APPLE_ID",
+      "label": "Apple ID / Email",
+      "description": "Your iCloud or Apple ID email address (e.g. user@icloud.com)",
+      "required": true,
+      "secret": false
+    },
+    {
+      "key": "ICLOUD_APP_PASSWORD",
+      "label": "App-Specific Password",
+      "description": "Generated from appleid.apple.com (xxxx-xxxx-xxxx-xxxx)",
+      "required": true,
+      "secret": true
+    }
+  ],
+  "tags": ["icloud", "apple", "calendar", "reminders"],
+  "claude_config": {
+    "command": "node",
+    "args": ["server.mjs"]
+  }
+}

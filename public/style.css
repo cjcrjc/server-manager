@@ -423,27 +423,91 @@ nav button.active { color: var(--accent); border-color: var(--accent); backgroun
 .prov-oc { background: rgba(56,189,248,0.15); color: #38bdf8; }
 .prov-combo { background: rgba(234,179,8,0.15); color: #facc15; }
 
-/* Model pool */
-.model-pool {
+.model-chip .chip-remove {
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0 0.15rem;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.model-chip .chip-remove:hover {
+  color: var(--red);
+  background: rgba(239,68,68,0.15);
+}
+
+.tier-add-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  min-height: 40px;
-  padding: 0.4rem;
-  background: #11131a;
+  gap: 0.4rem;
+  padding: 0.4rem 0.6rem 0.6rem;
+  align-items: center;
+}
+
+.tier-model-select {
+  flex: 1 1 200px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: #181b24;
   border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-family: monospace;
+}
+
+.tier-model-select:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.tier-empty-msg {
+  font-size: 0.75rem;
+  color: var(--muted);
+  padding: 0.5rem;
+  font-style: italic;
+}
+
+/* Quota Averaged Usage Pacing Controls & Info */
+.quota-pacing-control {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+  accent-color: var(--accent);
+}
+
+.info-note {
+  margin-top: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(79, 143, 247, 0.08);
+  border: 1px solid rgba(79, 143, 247, 0.25);
   border-radius: 6px;
+  font-size: 0.75rem;
+  color: var(--text);
+  line-height: 1.45;
 }
 
-.model-pool .model-chip {
-  font-size: 0.7rem;
-  padding: 0.3rem 0.5rem;
-}
-
-.model-pool.drag-over {
-  background: rgba(79,143,247,0.06);
-  outline: 2px dashed var(--accent);
-  outline-offset: -2px;
+.info-note strong {
+  color: var(--accent);
 }
 
 /* Connection cards */
@@ -490,3 +554,39 @@ nav button.active { color: var(--accent); border-color: var(--accent); backgroun
   nav { flex-wrap: wrap; }
   nav .brand { width: 100%; }
 }
+
+/* ── Plugin status dots ── */
+.plugin-name .dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  margin-right: 0.4rem; vertical-align: middle; background: var(--muted);
+}
+.dot-connected { background: var(--green); box-shadow: 0 0 6px rgba(34,197,94,0.4); }
+.dot-needs-config { background: #eab308; box-shadow: 0 0 6px rgba(234,179,8,0.4); }
+.dot-error { background: var(--red); box-shadow: 0 0 6px rgba(239,68,68,0.4); }
+.status-connected { color: var(--green); }
+.status-needs-config { color: #eab308; }
+.status-error { color: var(--red); }
+
+/* ── Config modal ── */
+.modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+  padding: 1rem;
+}
+.modal[hidden] { display: none; }
+.modal-box {
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; padding: 1rem;
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.modal-header h2 { margin: 0; font-size: 1rem; }
+.modal-footer { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.cfg-field { display: block; margin-bottom: 0.85rem; font-size: 0.85rem; }
+.cfg-field > span { display: block; margin-bottom: 0.3rem; }
+.cfg-field em { color: var(--red); font-style: normal; }
+.cfg-field input {
+  width: 100%; padding: 0.45rem 0.6rem; border-radius: 5px;
+  border: 1px solid var(--border); background: var(--bg); color: var(--fg);
+  font-family: inherit; font-size: 0.85rem;
+}
+.cfg-field small { display: block; margin-top: 0.25rem; color: var(--muted); font-size: 0.75rem; }
