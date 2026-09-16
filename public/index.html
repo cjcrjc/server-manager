@@ -121,7 +121,13 @@
             <div class="plugin-list" id="installed-plugins"></div>
           </div>
           <div class="card">
-            <h2>Plugin Registry Catalog</h2>
+            <div class="registry-header-row">
+              <h2>MCP Library & Registry</h2>
+              <div class="registry-search-box">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input id="registry-search" type="text" placeholder="Search MCPs (e.g. Linear, Microsoft, GitHub)..." oninput="filterRegistry()">
+              </div>
+            </div>
             <div class="plugin-list" id="registry-plugins"></div>
           </div>
           <div class="card">

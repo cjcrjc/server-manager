@@ -178,30 +178,9 @@ async function refreshPlugins() {
     }).join('');
   }
 
-  const rl = document.getElementById('registry-plugins');
-  if (!registry?.plugins?.length) {
-    rl.innerHTML = '<div class="empty">No plugins in registry</div>';
-  } else {
-    const installedIds = new Set((installed || []).map(p => p.id));
-    const installedDirs = new Set((installed || []).map(p => p._dir));
-    rl.innerHTML = registry.plugins.map(p => {
-      const instances = (installed || []).filter(i => i.id === p.id);
-      const hasBase = installedDirs.has(p.id);
-      return `<div class="plugin-card">
-        <div class="plugin-header">
-          <span class="plugin-name">${esc(p.name)}${p.multiAccount ? '<span class="instance-badge">multi-account</span>' : ''}</span>
-          <div style="display:flex;gap:0.3rem;align-items:center">
-            ${hasBase && !p.multiAccount
-              ? '<span class="tag" style="background:rgba(34,197,94,0.15);color:var(--green)">Installed</span>'
-              : `<button class="btn btn-sm" onclick="installRegistryPlugin('${esc(p.source)}','${esc(p.id)}',${!!p.multiAccount})">${hasBase ? '+ Instance' : 'Install'}</button>`}
-          </div>
-        </div>
-        <div class="plugin-desc">${esc(p.description)}</div>
-        ${instances.length > 0 ? `<div style="margin-top:0.3rem;font-size:0.75rem;color:var(--green)">Installed: ${instances.map(i => esc(i._dir)).join(', ')}</div>` : ''}
-        ${p.tags ? `<div class="tags">${p.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
-      </div>`;
-    }).join('');
-  }
+  window._cachedInstalled = installed || [];
+  window._cachedRegistry = registry?.plugins || [];
+  renderRegistryList();
 }
 
 window.installRegistryPlugin = async function(source, id, multiAccount) {
@@ -240,6 +219,58 @@ document.getElementById('install-form').addEventListener('submit', async e => {
   if (res?.ok) { toast(`Installed ${fd.get('id')}`); e.target.reset(); refreshPlugins(); }
   else toast(res?.error || 'Install failed', 'error');
 });
+
+
+function renderRegistryList(filterQuery = '') {
+  const rl = document.getElementById('registry-plugins');
+  if (!rl) return;
+  const plugins = window._cachedRegistry || [];
+  const installed = window._cachedInstalled || [];
+
+  if (!plugins.length) {
+    rl.innerHTML = '<div class="empty">No plugins in registry</div>';
+    return;
+  }
+
+  const q = filterQuery.trim().toLowerCase();
+  const matched = plugins.filter(p => {
+    if (!q) return true;
+    const nameMatch = (p.name || '').toLowerCase().includes(q);
+    const descMatch = (p.description || '').toLowerCase().includes(q);
+    const idMatch = (p.id || '').toLowerCase().includes(q);
+    const tagMatch = (p.tags || []).some(t => t.toLowerCase().includes(q));
+    return nameMatch || descMatch || idMatch || tagMatch;
+  });
+
+  if (!matched.length) {
+    rl.innerHTML = `<div class="empty">No matching MCPs found for "${esc(filterQuery)}"</div>`;
+    return;
+  }
+
+  const installedDirs = new Set(installed.map(p => p._dir || p.id));
+  rl.innerHTML = matched.map(p => {
+    const instances = installed.filter(i => i.id === p.id);
+    const hasBase = installedDirs.has(p.id);
+    return `<div class="plugin-card">
+      <div class="plugin-header">
+        <span class="plugin-name">${esc(p.name)}${p.multiAccount ? '<span class="instance-badge">multi-account</span>' : ''}</span>
+        <div style="display:flex;gap:0.3rem;align-items:center">
+          ${hasBase && !p.multiAccount
+            ? '<span class="tag" style="background:rgba(16,185,129,0.15);color:var(--green)">Installed</span>'
+            : `<button class="btn btn-sm" onclick="installRegistryPlugin('${esc(p.source)}','${esc(p.id)}',${!!p.multiAccount})">${hasBase ? '+ Instance' : 'Install'}</button>`}
+        </div>
+      </div>
+      <div class="plugin-desc">${esc(p.description)}</div>
+      ${instances.length > 0 ? `<div style="margin-top:0.3rem;font-size:0.75rem;color:var(--green)">Installed: ${instances.map(i => esc(i._dir || i.id)).join(', ')}</div>` : ''}
+      ${p.tags ? `<div class="tags">${p.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+window.filterRegistry = function() {
+  const input = document.getElementById('registry-search');
+  renderRegistryList(input ? input.value : '');
+};
 
 // ── 9Router Tier Editor ──
 let routerLoaded = false;

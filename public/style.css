@@ -941,3 +941,46 @@ body {
     align-items: flex-start;
   }
 }
+
+/* ── Registry Header & Search Box ── */
+.registry-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.registry-header-row h2 {
+  margin-bottom: 0;
+}
+
+.registry-search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.65rem;
+  width: 100%;
+  max-width: 320px;
+}
+
+.registry-search-box svg {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.registry-search-box input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 0.82rem;
+  width: 100%;
+  outline: none;
+}
+.registry-search-box:focus-within {
+  border-color: var(--border-focus);
+}

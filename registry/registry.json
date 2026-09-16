@@ -88,6 +88,182 @@
           "console.log('Follow Microsoft Device Code or token setup instructions in Configure.')"
         ]
       }
+    },
+    {
+      "id": "linear-mcp",
+      "name": "Linear",
+      "description": "Issue tracking, project management, and sprint planning via Linear API",
+      "source": "npm:mcp-server-linear",
+      "tags": [
+        "linear",
+        "issues",
+        "projects",
+        "tracker"
+      ],
+      "multiAccount": true,
+      "entry": "node_modules/mcp-server-linear/build/index.js",
+      "env": [
+        {
+          "key": "LINEAR_API_KEY",
+          "label": "Linear API Key",
+          "description": "Personal API key from Linear Settings -> Security & Access -> Personal API keys (lin_api_...)",
+          "required": true,
+          "secret": true
+        }
+      ]
+    },
+    {
+      "id": "ms-365-mcp",
+      "name": "Microsoft 365",
+      "description": "Microsoft 365 suite: Outlook email & calendar, OneDrive, Teams, and Graph API",
+      "source": "npm:@softeria/ms-365-mcp-server",
+      "tags": [
+        "microsoft",
+        "office365",
+        "outlook",
+        "email",
+        "calendar",
+        "teams"
+      ],
+      "multiAccount": true,
+      "entry": "node_modules/@softeria/ms-365-mcp-server/dist/index.js",
+      "env": [
+        {
+          "key": "CLIENT_ID",
+          "label": "Azure Client ID",
+          "description": "Application (client) ID from your Entra App Registration",
+          "required": true,
+          "secret": false
+        },
+        {
+          "key": "CLIENT_SECRET",
+          "label": "Client Secret",
+          "description": "Client secret value generated in Azure Portal",
+          "required": true,
+          "secret": true
+        },
+        {
+          "key": "TENANT_ID",
+          "label": "Tenant ID",
+          "description": "Directory (tenant) ID or 'common' / 'consumers'",
+          "required": false,
+          "secret": false
+        }
+      ]
+    },
+    {
+      "id": "github-mcp",
+      "name": "GitHub",
+      "description": "Manage repositories, issues, PRs, code search, and git operations",
+      "source": "npm:@modelcontextprotocol/server-github",
+      "tags": [
+        "github",
+        "git",
+        "issues",
+        "code",
+        "repos"
+      ],
+      "multiAccount": true,
+      "entry": "node_modules/@modelcontextprotocol/server-github/dist/index.js",
+      "env": [
+        {
+          "key": "GITHUB_PERSONAL_ACCESS_TOKEN",
+          "label": "GitHub Personal Access Token",
+          "description": "Classic or Fine-grained Personal Access Token with repo scope (ghp_...)",
+          "required": true,
+          "secret": true
+        }
+      ]
+    },
+    {
+      "id": "slack-mcp",
+      "name": "Slack",
+      "description": "Read channels, post messages, threads, and workspace search via Slack Bot API",
+      "source": "npm:@modelcontextprotocol/server-slack",
+      "tags": [
+        "slack",
+        "chat",
+        "messaging",
+        "workspace"
+      ],
+      "multiAccount": true,
+      "entry": "node_modules/@modelcontextprotocol/server-slack/dist/index.js",
+      "env": [
+        {
+          "key": "SLACK_BOT_TOKEN",
+          "label": "Slack Bot User Token",
+          "description": "Bot User OAuth Token from your Slack app (xoxb-...)",
+          "required": true,
+          "secret": true
+        },
+        {
+          "key": "SLACK_TEAM_ID",
+          "label": "Slack Team/Workspace ID",
+          "description": "Workspace ID (T0XXXXXXX)",
+          "required": false,
+          "secret": false
+        }
+      ]
+    },
+    {
+      "id": "brave-search-mcp",
+      "name": "Brave Search",
+      "description": "Web and local business search via Brave Search API",
+      "source": "npm:@modelcontextprotocol/server-brave-search",
+      "tags": [
+        "search",
+        "web",
+        "brave",
+        "internet"
+      ],
+      "multiAccount": false,
+      "entry": "node_modules/@modelcontextprotocol/server-brave-search/dist/index.js",
+      "env": [
+        {
+          "key": "BRAVE_API_KEY",
+          "label": "Brave Search API Key",
+          "description": "Free or Pro API key from api.search.brave.com (BSA...)",
+          "required": true,
+          "secret": true
+        }
+      ]
+    },
+    {
+      "id": "postgres-mcp",
+      "name": "PostgreSQL",
+      "description": "Query databases, inspect schemas, and execute read-only SQL commands",
+      "source": "npm:@modelcontextprotocol/server-postgres",
+      "tags": [
+        "postgres",
+        "sql",
+        "database"
+      ],
+      "multiAccount": true,
+      "entry": "node_modules/@modelcontextprotocol/server-postgres/dist/index.js",
+      "env": [
+        {
+          "key": "POSTGRES_URL",
+          "label": "PostgreSQL Connection URI",
+          "description": "Full connection string (postgresql://user:password@host:port/dbname)",
+          "required": true,
+          "secret": true
+        }
+      ]
+    },
+    {
+      "id": "memory-mcp",
+      "name": "Memory Knowledge Graph",
+      "description": "Local persistent knowledge graph for AI agent memory across sessions",
+      "source": "npm:@modelcontextprotocol/server-memory",
+      "tags": [
+        "memory",
+        "knowledge-graph",
+        "state",
+        "context"
+      ],
+      "multiAccount": false,
+      "entry": "node_modules/@modelcontextprotocol/server-memory/dist/index.js",
+      "env": []
     }
   ]
 }
