@@ -1,0 +1,9 @@
+{
+  "name": "waterloo-learn-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=24"},
+  "scripts": {"start": "node server.mjs", "test": "node --test", "check": "node --check server.mjs && node --check learn.mjs && node --check sync.mjs"},
+  "dependencies": {"@modelcontextprotocol/sdk": "1.30.0", "zod": "^3.25.0", "dotenv": "^17.0.0", "ical.js": "2.2.1"}
+}

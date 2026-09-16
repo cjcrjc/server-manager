@@ -4,7 +4,7 @@
       "id": "google-mcp",
       "name": "Google Workspace",
       "description": "Google Calendar, Gmail, Drive, Docs MCP server",
-      "source": "/home/cam/google-mcp",
+      "source": "template:google",
       "tags": ["google", "calendar", "gmail", "drive"],
       "multiAccount": true
     },
@@ -12,7 +12,7 @@
       "id": "icloud-mcp",
       "name": "iCloud",
       "description": "iCloud Calendars & Reminders via CalDAV",
-      "source": "/home/cam/icloud-mcp",
+      "source": "template:icloud",
       "tags": ["icloud", "apple", "calendar", "reminders"],
       "multiAccount": true
     },
@@ -20,7 +20,7 @@
       "id": "d2l-mcp",
       "name": "Waterloo LEARN (D2L)",
       "description": "Waterloo LEARN course data, assignments, grades MCP",
-      "source": "/home/cam/d2l-mcp",
+      "source": "template:d2l",
       "tags": ["d2l", "learn", "university", "courses"],
       "multiAccount": true
     },

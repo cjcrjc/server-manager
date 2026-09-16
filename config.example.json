@@ -15,33 +15,29 @@
       "type": "user",
       "port": 20128,
       "web": true
-    },
-    {
-      "name": "9Router Smart Router",
-      "unit": "9router-smart-router.service",
-      "type": "user",
-      "port": 20129,
-      "web": false
-    },
-    {
-      "name": "Headroom Proxy",
-      "unit": "headroom.service",
-      "type": "user",
-      "port": 8787,
-      "web": false
-    },
-    {
-      "name": "Time Study",
-      "unit": "time-study.service",
-      "type": "user",
-      "port": 3456,
-      "web": true
     }
   ],
   "deps": {
-    "tailscale": { "check": "tailscale status --json", "fix": null },
-    "9router": { "check": "systemctl --user is-active 9router.service", "fix": "systemctl --user start 9router.service" },
-    "paseo": { "check": "systemctl --user is-active paseo.service", "fix": "systemctl --user start paseo.service" }
+    "node": {
+      "check": "node -v",
+      "fix": null,
+      "install": "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt-get install -y nodejs"
+    },
+    "tailscale": {
+      "check": "tailscale status --json",
+      "fix": "sudo systemctl start tailscaled",
+      "install": "curl -fsSL https://tailscale.com/install.sh | sh"
+    },
+    "9router": {
+      "check": "which 9router",
+      "fix": "systemctl --user start 9router.service",
+      "install": "npm install -g 9router"
+    },
+    "paseo": {
+      "check": "which paseo",
+      "fix": "systemctl --user start paseo.service",
+      "install": "npm install -g @getpaseo/cli"
+    }
   },
   "plugins": {}
 }

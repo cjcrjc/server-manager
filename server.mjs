@@ -152,20 +152,26 @@ async function handleAPI(req, res, url) {
 
   // GET /api/9router/combos
   if (method === 'GET' && url === '/api/9router/combos') {
+    if (!ninerouter.isInstalled()) {
+      return json(res, { installed: false, error: '9Router not installed or initialized' });
+    }
     try {
       const [combos, models, policyState] = await Promise.all([
         ninerouter.getCombos(),
         ninerouter.getModels(),
         Promise.resolve(ninerouter.getQuotaPolicyState()),
       ]);
-      return json(res, { combos, models, policyState });
+      return json(res, { installed: true, combos, models, policyState });
     } catch (e) {
-      return json(res, { error: e.message }, 502);
+      return json(res, { installed: true, error: e.message }, 502);
     }
   }
 
   // GET /api/9router/connections
   if (method === 'GET' && url === '/api/9router/connections') {
+    if (!ninerouter.isInstalled()) {
+      return json(res, []);
+    }
     try {
       const conns = await ninerouter.getConnections();
       return json(res, conns);
@@ -230,6 +236,6 @@ const server = createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, '127.0.0.1', () => {
-  console.log(`Server manager listening on http://127.0.0.1:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server manager listening on http://0.0.0.0:${PORT}`);
 });

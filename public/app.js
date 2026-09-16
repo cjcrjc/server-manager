@@ -221,9 +221,27 @@ async function refreshRouter() {
   if (!comboData) return;
   routerData = comboData;
 
+  const tiersEl = document.getElementById('router-tiers');
+  const poolEl = document.getElementById('router-models');
+  const policyEl = document.getElementById('router-policy');
+  const connEl = document.getElementById('router-connections');
+
+  if (comboData.installed === false) {
+    policyEl.innerHTML = `
+      <div style="padding:1rem;background:#1a1515;border:1px solid #7f1d1d;border-radius:6px;color:#fca5a5">
+        <strong>9Router is not installed or initialized.</strong>
+        <p style="font-size:0.8rem;margin-top:0.4rem;color:var(--muted)">
+          Go to the <strong>Setup</strong> tab to install 9Router, or run: <code>npm install -g 9router</code>
+        </p>
+      </div>`;
+    tiersEl.innerHTML = '<div class="empty">9Router not running</div>';
+    poolEl.innerHTML = '<div class="empty">No models available</div>';
+    connEl.innerHTML = '<div class="empty">No connections found</div>';
+    return;
+  }
+
   // Policy status
   const ps = comboData.policyState;
-  const policyEl = document.getElementById('router-policy');
   if (ps) {
     policyEl.innerHTML = `<div style="font-size:0.8rem;color:var(--muted)">
       <div>Primary: <strong style="color:var(--text)">${esc(ps.primary)}</strong></div>
@@ -232,7 +250,7 @@ async function refreshRouter() {
       <div>Updated: ${new Date(ps.updatedAt).toLocaleString()}</div>
     </div>`;
   } else {
-    policyEl.innerHTML = '<div class="empty">No quota policy state</div>';
+    policyEl.innerHTML = '<div class="empty">No quota policy state active</div>';
   }
 
   // Render tiers
@@ -242,7 +260,6 @@ async function refreshRouter() {
   renderModelPool();
 
   // Connections
-  const connEl = document.getElementById('router-connections');
   if (connData && connData.length) {
     connEl.innerHTML = `<div class="conn-grid">${connData.map(c => `<div class="conn-card">
       <div class="conn-provider">${esc(c.provider)}<span class="instance-badge">P${c.priority}</span></div>
@@ -252,7 +269,7 @@ async function refreshRouter() {
       </div>
     </div>`).join('')}</div>`;
   } else {
-    connEl.innerHTML = '<div class="empty">Could not load connections</div>';
+    connEl.innerHTML = '<div class="empty">No provider connections configured</div>';
   }
 }
 
@@ -452,10 +469,13 @@ async function refreshDeps() {
       <div class="dot ${d.ok ? 'active' : 'inactive'}"></div>
       ${esc(d.name)}
     </div>
-    <div>
-      ${!d.ok && d.canFix
-        ? `<button class="btn btn-sm" onclick="fixDep('${esc(d.name)}')">Fix</button>`
-        : `<span style="font-size:0.8rem;color:${d.ok ? 'var(--green)' : 'var(--red)'}">${d.ok ? 'OK' : 'Down'}</span>`}
+    <div style="display:flex;gap:0.4rem;align-items:center">
+      ${!d.ok
+        ? (d.canFix
+            ? `<button class="btn btn-sm" onclick="fixDep('${esc(d.name)}')">Fix / Start</button>`
+            : (d.install ? `<button class="btn btn-sm" onclick="fixDep('${esc(d.name)}')">Install</button>` : ''))
+        : ''}
+      <span style="font-size:0.8rem;color:${d.ok ? 'var(--green)' : 'var(--red)'}">${d.ok ? 'OK' : 'Down'}</span>
     </div>
   </div>`).join('');
 
