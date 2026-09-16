@@ -124,6 +124,8 @@ async function refreshPlugins() {
       <div class="plugin-header">
         <span class="plugin-name"><span class="dot dot-${esc(st.state)}" title="${esc(st.detail)}"></span>${esc(p.name || p.id)}${p._dir && p._dir !== p.id ? `<span class="instance-badge">${esc(p._dir)}</span>` : ''}</span>
         <div style="display:flex;gap:0.3rem">
+          <button class="btn btn-sm btn-outline" onclick="pingPlugin('${esc(dir)}')">Ping</button>
+          ${p.auth ? `<button class="btn btn-sm" style="background:#8b5cf6;" onclick="startAuthTerminal('${esc(dir)}')">Authenticate</button>` : ''}
           <button class="btn btn-sm" onclick="configurePlugin('${esc(dir)}')">Configure</button>
           <button class="btn btn-sm btn-danger" onclick="removePlugin('${esc(dir)}')">Remove</button>
         </div>
@@ -547,6 +549,96 @@ window.jumpToPort = function(e) {
 
 // ── Plugin config modal ──
 let cfgId = null;
+
+
+// ── Ping Plugin ──
+window.pingPlugin = async function(id) {
+  toast(`Pinging ${id}…`);
+  const res = await api(`/api/plugins/${encodeURIComponent(id)}/ping`, { method: 'POST' });
+  if (res?.ok) {
+    toast(`✓ ${id}: ${res.detail || 'Connected'}`, 'success');
+  } else {
+    toast(`✗ ${id}: ${res?.error || 'Ping failed'}`, 'error');
+  }
+  refreshPlugins();
+};
+
+// ── Interactive Auth Terminal ──
+let activeTermSession = null;
+let activeEventSource = null;
+
+window.startAuthTerminal = async function(id) {
+  const res = await api(`/api/plugins/${encodeURIComponent(id)}/auth/start`, { method: 'POST' });
+  if (!res?.ok || !res.sessionId) {
+    return toast(res?.error || 'Failed to start auth process', 'error');
+  }
+
+  activeTermSession = res.sessionId;
+  document.getElementById('term-title').textContent = `Auth Terminal — ${id}`;
+  const out = document.getElementById('term-output');
+  out.textContent = `[Starting authentication session for ${id}...]
+`;
+  document.getElementById('term-modal').hidden = false;
+  document.getElementById('term-input').focus();
+
+  if (activeEventSource) {
+    activeEventSource.close();
+  }
+
+  activeEventSource = new EventSource(`/api/pty/${encodeURIComponent(activeTermSession)}/stream`);
+  activeEventSource.onmessage = (e) => {
+    try {
+      const msg = JSON.parse(e.data);
+      if (msg.data) {
+        out.textContent += msg.data;
+        out.scrollTop = out.scrollHeight;
+      }
+      if (msg.exited) {
+        toast('Auth process finished');
+        refreshPlugins();
+      }
+    } catch {}
+  };
+  activeEventSource.onerror = () => {
+    // disconnected or closed
+  };
+};
+
+window.sendTermInput = async function() {
+  if (!activeTermSession) return;
+  const inp = document.getElementById('term-input');
+  const val = inp.value + '\n';
+  inp.value = '';
+  await api(`/api/pty/${encodeURIComponent(activeTermSession)}/input`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ input: val })
+  });
+};
+
+window.handleTermKey = function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    sendTermInput();
+  }
+};
+
+window.closeAuthTerminal = function() {
+  if (activeEventSource) {
+    activeEventSource.close();
+    activeEventSource = null;
+  }
+  document.getElementById('term-modal').hidden = true;
+  refreshPlugins();
+};
+
+window.killAuthTerminal = async function() {
+  if (activeTermSession) {
+    await api(`/api/pty/${encodeURIComponent(activeTermSession)}/kill`, { method: 'POST' });
+    toast('Stopped auth process');
+  }
+  closeAuthTerminal();
+};
 
 window.configurePlugin = async function(id) {
   const cfg = await api(`/api/plugins/${encodeURIComponent(id)}/config`);

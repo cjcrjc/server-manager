@@ -50,9 +50,23 @@
       "secret": false
     }
   ],
-  "tags": ["d2l", "learn", "university", "courses"],
+  "tags": [
+    "d2l",
+    "learn",
+    "university",
+    "courses"
+  ],
   "claude_config": {
     "command": "node",
-    "args": ["server.mjs"]
+    "args": [
+      "server.mjs"
+    ]
+  },
+  "auth": {
+    "command": "node",
+    "args": [
+      "login.mjs"
+    ],
+    "description": "Interactive Waterloo Duo 2FA login"
   }
 }

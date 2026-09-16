@@ -1,3 +1,4 @@
+import * as ptySession from './lib/pty-session.mjs';
 import { createServer } from 'node:http';
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join, dirname, extname } from 'node:path';
@@ -140,6 +141,79 @@ async function handleAPI(req, res, url) {
     try {
       const body = await readBody(req);
       return json(res, { ok: true, status: plugins.setConfig(params.id, body) });
+    } catch (e) {
+      return json(res, { error: e.message }, 500);
+    }
+  }
+
+
+  // POST /api/plugins/:id/ping
+  if ((params = match(method, url, ['POST', '/api/plugins/:id/ping']))) {
+    try {
+      const result = await plugins.ping(params.id);
+      return json(res, result);
+    } catch (e) {
+      return json(res, { ok: false, error: e.message }, 500);
+    }
+  }
+
+  // POST /api/plugins/:id/auth/start
+  if ((params = match(method, url, ['POST', '/api/plugins/:id/auth/start']))) {
+    try {
+      const manifest = plugins.manifestOf(params.id);
+      if (!manifest.auth || !manifest.auth.command) {
+        return json(res, { error: 'No auth command configured for this plugin' }, 400);
+      }
+      const dir = plugins.pluginDir(params.id);
+      const sessionId = ptySession.startSession(manifest.auth.command, manifest.auth.args || [], { cwd: dir });
+      return json(res, { ok: true, sessionId });
+    } catch (e) {
+      return json(res, { error: e.message }, 500);
+    }
+  }
+
+  // GET /api/pty/:sessionId/stream (SSE)
+  if ((params = match(method, url, ['GET', '/api/pty/:sessionId/stream']))) {
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive'
+    });
+    res.write('retry: 1000\n\n');
+    const detach = ptySession.attachSession(params.sessionId, (data, exited) => {
+      res.write(`data: ${JSON.stringify({ data, exited })}\n\n`);
+      if (exited) {
+        setTimeout(() => {
+          try { res.end(); } catch {}
+        }, 1000);
+      }
+    });
+    if (!detach) {
+      res.write(`data: ${JSON.stringify({ data: 'Session not found or expired\r\n', exited: true })}\n\n`);
+      return res.end();
+    }
+    req.on('close', () => {
+      detach();
+    });
+    return;
+  }
+
+  // POST /api/pty/:sessionId/input
+  if ((params = match(method, url, ['POST', '/api/pty/:sessionId/input']))) {
+    try {
+      const body = await readBody(req);
+      const ok = ptySession.writeSession(params.sessionId, body.input || '');
+      return json(res, { ok });
+    } catch (e) {
+      return json(res, { error: e.message }, 500);
+    }
+  }
+
+  // POST /api/pty/:sessionId/kill
+  if ((params = match(method, url, ['POST', '/api/pty/:sessionId/kill']))) {
+    try {
+      const ok = ptySession.killSession(params.sessionId);
+      return json(res, { ok });
     } catch (e) {
       return json(res, { error: e.message }, 500);
     }

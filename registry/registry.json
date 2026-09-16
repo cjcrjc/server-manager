@@ -80,7 +80,14 @@
           "required": false,
           "secret": false
         }
-      ]
+      ],
+      "auth": {
+        "command": "node",
+        "args": [
+          "-e",
+          "console.log('Follow Microsoft Device Code or token setup instructions in Configure.')"
+        ]
+      }
     }
   ]
 }

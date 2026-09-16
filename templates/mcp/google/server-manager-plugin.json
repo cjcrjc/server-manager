@@ -16,9 +16,23 @@
       "default": "personal:user@gmail.com"
     }
   ],
-  "tags": ["google", "calendar", "gmail", "drive"],
+  "tags": [
+    "google",
+    "calendar",
+    "gmail",
+    "drive"
+  ],
   "claude_config": {
     "command": "node",
-    "args": ["server.mjs"]
+    "args": [
+      "server.mjs"
+    ]
+  },
+  "auth": {
+    "command": "node",
+    "args": [
+      "configure.js"
+    ],
+    "description": "Trigger Google Workspace OAuth flow"
   }
 }

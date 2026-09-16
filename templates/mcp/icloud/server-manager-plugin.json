@@ -22,9 +22,23 @@
       "secret": true
     }
   ],
-  "tags": ["icloud", "apple", "calendar", "reminders"],
+  "tags": [
+    "icloud",
+    "apple",
+    "calendar",
+    "reminders"
+  ],
   "claude_config": {
     "command": "node",
-    "args": ["server.mjs"]
+    "args": [
+      "server.mjs"
+    ]
+  },
+  "auth": {
+    "command": "node",
+    "args": [
+      "auth.mjs"
+    ],
+    "description": "Interactive iCloud verification & setup"
   }
 }
