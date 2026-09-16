@@ -12,6 +12,7 @@
     <button class="active" data-tab="dashboard">Dashboard</button>
     <button data-tab="services">Services</button>
     <button data-tab="plugins">Plugins</button>
+    <button data-tab="router">9Router</button>
     <button data-tab="setup">Setup</button>
   </nav>
 
@@ -58,12 +59,44 @@
         <div class="plugin-list" id="registry-plugins"></div>
       </div>
       <div class="card">
-        <h2>Install from URL</h2>
+        <h2>Install from Source</h2>
+        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem">
+          Git URL, local path, or npm:package-name
+        </p>
         <form class="install-form" id="install-form">
-          <input name="repo" type="url" placeholder="https://github.com/user/my-mcp" required>
+          <input name="source" type="text" placeholder="https://github.com/… or /path/to/mcp or npm:pkg" required>
           <input name="id" type="text" placeholder="plugin-id" required style="max-width:120px">
           <button class="btn" type="submit">Install</button>
         </form>
+      </div>
+    </div>
+
+    <!-- 9Router Tab -->
+    <div id="tab-router" class="tab">
+      <div class="card">
+        <h2>Quota Policy Status</h2>
+        <div id="router-policy"></div>
+      </div>
+      <div class="card">
+        <h2>Complexity Tiers</h2>
+        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem">
+          Drag models to reorder within a tier, or between tiers. Changes save automatically.
+        </p>
+        <div id="router-tiers"></div>
+        <div style="margin-top:0.75rem">
+          <button class="btn btn-sm btn-outline" onclick="addTier()">+ New Tier</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Available Models</h2>
+        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem">
+          Drag models from here into tiers above
+        </p>
+        <div id="router-models" class="model-pool"></div>
+      </div>
+      <div class="card">
+        <h2>Provider Connections</h2>
+        <div id="router-connections"></div>
       </div>
     </div>
 

@@ -6,6 +6,7 @@ import * as config from './lib/config.mjs';
 import * as services from './lib/services.mjs';
 import * as deps from './lib/deps.mjs';
 import * as plugins from './lib/plugins.mjs';
+import * as ninerouter from './lib/ninerouter.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC = join(__dirname, 'public');
@@ -27,7 +28,6 @@ function json(res, data, status = 200) {
 
 function serveStatic(res, urlPath) {
   const filePath = join(PUBLIC, urlPath === '/' ? 'index.html' : urlPath);
-  // Prevent directory traversal
   if (!filePath.startsWith(PUBLIC)) return notFound(res);
   if (!existsSync(filePath) || statSync(filePath).isDirectory()) return notFound(res);
   const mime = MIME[extname(filePath)] || 'application/octet-stream';
@@ -46,7 +46,6 @@ async function readBody(req) {
   return raw ? JSON.parse(raw) : {};
 }
 
-// Route matching helper
 function match(method, url, pattern) {
   if (method !== pattern[0]) return null;
   const parts = url.split('/').filter(Boolean);
@@ -109,8 +108,8 @@ async function handleAPI(req, res, url) {
   if (method === 'POST' && url === '/api/plugins/install') {
     try {
       const body = await readBody(req);
-      if (!body.repo || !body.id) return json(res, { error: 'repo and id required' }, 400);
-      const manifest = await plugins.install(body.repo, body.id);
+      if (!body.source || !body.id) return json(res, { error: 'source and id required' }, 400);
+      const manifest = await plugins.install(body.source, body.id);
       return json(res, { ok: true, manifest });
     } catch (e) {
       return json(res, { error: e.message }, 500);
@@ -147,6 +146,68 @@ async function handleAPI(req, res, url) {
   if (method === 'GET' && url === '/api/config') {
     const cfg = config.get();
     return json(res, { hostname: cfg.hostname, port: cfg.port, serviceCount: cfg.services?.length });
+  }
+
+  // ── 9Router API ──
+
+  // GET /api/9router/combos
+  if (method === 'GET' && url === '/api/9router/combos') {
+    try {
+      const [combos, models, policyState] = await Promise.all([
+        ninerouter.getCombos(),
+        ninerouter.getModels(),
+        Promise.resolve(ninerouter.getQuotaPolicyState()),
+      ]);
+      return json(res, { combos, models, policyState });
+    } catch (e) {
+      return json(res, { error: e.message }, 502);
+    }
+  }
+
+  // GET /api/9router/connections
+  if (method === 'GET' && url === '/api/9router/connections') {
+    try {
+      const conns = await ninerouter.getConnections();
+      return json(res, conns);
+    } catch (e) {
+      return json(res, { error: e.message }, 502);
+    }
+  }
+
+  // PUT /api/9router/combos/:id
+  if ((params = match(method, url, ['PUT', '/api/9router/combos/:id']))) {
+    try {
+      const body = await readBody(req);
+      if (!Array.isArray(body.models)) return json(res, { error: 'models array required' }, 400);
+      await ninerouter.updateCombo(params.id, body.models);
+      return json(res, { ok: true });
+    } catch (e) {
+      return json(res, { error: e.message }, 502);
+    }
+  }
+
+  // POST /api/9router/combos
+  if (method === 'POST' && url === '/api/9router/combos') {
+    try {
+      const body = await readBody(req);
+      if (!body.name || !Array.isArray(body.models)) {
+        return json(res, { error: 'name and models[] required' }, 400);
+      }
+      const result = await ninerouter.createCombo(body.name, body.models);
+      return json(res, { ok: true, combo: result });
+    } catch (e) {
+      return json(res, { error: e.message }, 502);
+    }
+  }
+
+  // DELETE /api/9router/combos/:id
+  if ((params = match(method, url, ['DELETE', '/api/9router/combos/:id']))) {
+    try {
+      await ninerouter.deleteCombo(params.id);
+      return json(res, { ok: true });
+    } catch (e) {
+      return json(res, { error: e.message }, 502);
+    }
   }
 
   notFound(res);
