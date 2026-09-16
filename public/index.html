@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Server Manager</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav>
+    <div class="brand">Server Manager<span id="hostname"></span></div>
+    <button class="active" data-tab="dashboard">Dashboard</button>
+    <button data-tab="services">Services</button>
+    <button data-tab="plugins">Plugins</button>
+    <button data-tab="setup">Setup</button>
+  </nav>
+
+  <div class="container">
+    <!-- Dashboard Tab -->
+    <div id="tab-dashboard" class="tab active">
+      <div class="card">
+        <h2>Services</h2>
+        <div class="svc-grid" id="dash-services"></div>
+      </div>
+      <div class="card">
+        <h2>Dependencies</h2>
+        <div class="svc-grid" id="dash-deps"></div>
+      </div>
+      <div class="card">
+        <h2>Installed Plugins</h2>
+        <div id="dash-plugins"></div>
+      </div>
+    </div>
+
+    <!-- Services Tab -->
+    <div id="tab-services" class="tab">
+      <div class="card">
+        <h2>Managed Services</h2>
+        <div class="svc-list" id="svc-list"></div>
+      </div>
+      <div class="card">
+        <h2>Jump to Port</h2>
+        <form class="install-form" onsubmit="jumpToPort(event)">
+          <input id="port-input" type="number" min="1" max="65535" placeholder="Port number" required>
+          <button class="btn" type="submit">Go</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Plugins Tab -->
+    <div id="tab-plugins" class="tab">
+      <div class="card">
+        <h2>Installed</h2>
+        <div class="plugin-list" id="installed-plugins"></div>
+      </div>
+      <div class="card">
+        <h2>Registry</h2>
+        <div class="plugin-list" id="registry-plugins"></div>
+      </div>
+      <div class="card">
+        <h2>Install from URL</h2>
+        <form class="install-form" id="install-form">
+          <input name="repo" type="url" placeholder="https://github.com/user/my-mcp" required>
+          <input name="id" type="text" placeholder="plugin-id" required style="max-width:120px">
+          <button class="btn" type="submit">Install</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Setup Tab -->
+    <div id="tab-setup" class="tab">
+      <div class="card">
+        <h2>Dependency Status</h2>
+        <div id="dep-list" class="svc-list"></div>
+      </div>
+      <div class="card">
+        <h2>Server Info</h2>
+        <div id="server-info" style="font-size:0.85rem;color:var(--muted)"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

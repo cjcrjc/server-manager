@@ -1,0 +1,25 @@
+{
+  "plugins": [
+    {
+      "id": "google-mcp",
+      "name": "Google Workspace",
+      "description": "Google Calendar, Gmail, Drive, Docs MCP server",
+      "repo": "https://github.com/cjcrjc/google-mcp",
+      "tags": ["google", "calendar", "gmail", "drive"]
+    },
+    {
+      "id": "icloud-mcp",
+      "name": "iCloud",
+      "description": "iCloud Calendars & Reminders via CalDAV",
+      "repo": "https://github.com/cjcrjc/icloud-mcp",
+      "tags": ["icloud", "apple", "calendar", "reminders"]
+    },
+    {
+      "id": "d2l-mcp",
+      "name": "Waterloo LEARN (D2L)",
+      "description": "Waterloo LEARN course data, assignments, grades MCP",
+      "repo": "https://github.com/cjcrjc/d2l-mcp",
+      "tags": ["d2l", "learn", "university", "courses"]
+    }
+  ]
+}
