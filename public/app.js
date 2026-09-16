@@ -1,15 +1,51 @@
-// ── Tab switching ──
-document.querySelectorAll('nav button[data-tab]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('nav button[data-tab]').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    const tab = document.getElementById('tab-' + btn.dataset.tab);
-    tab.classList.add('active');
-    // Lazy-load router tab
-    if (btn.dataset.tab === 'router' && !routerLoaded) refreshRouter();
+// ── Tab switching & Navigation ──
+function switchTab(tabName) {
+  document.querySelectorAll('[data-tab]').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tabName);
   });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const tab = document.getElementById('tab-' + tabName);
+  if (tab) tab.classList.add('active');
+
+  // Close mobile sidebar if open
+  closeMobileSidebar();
+
+  // Lazy-load router tab
+  if (tabName === 'router' && !routerLoaded) refreshRouter();
+}
+
+document.querySelectorAll('[data-tab]').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
 });
+
+// Mobile menu toggle
+const menuToggle = document.getElementById('menu-toggle');
+const sidebar = document.getElementById('sidebar');
+const backdrop = document.getElementById('sidebar-backdrop');
+
+function openMobileSidebar() {
+  if (sidebar) sidebar.classList.add('open');
+  if (backdrop) backdrop.classList.add('active');
+}
+
+function closeMobileSidebar() {
+  if (sidebar) sidebar.classList.remove('open');
+  if (backdrop) backdrop.classList.remove('active');
+}
+
+if (menuToggle) {
+  menuToggle.addEventListener('click', () => {
+    if (sidebar && sidebar.classList.contains('open')) {
+      closeMobileSidebar();
+    } else {
+      openMobileSidebar();
+    }
+  });
+}
+
+if (backdrop) {
+  backdrop.addEventListener('click', closeMobileSidebar);
+}
 
 // ── Utilities ──
 function toast(msg, type = 'success') {
@@ -43,7 +79,11 @@ async function refreshDashboard() {
   const data = await api('/api/status');
   if (!data) return;
 
-  document.getElementById('hostname').textContent = data.hostname || hostname;
+  const hname = data.hostname || hostname;
+  const hostEl = document.getElementById('hostname');
+  if (hostEl) hostEl.textContent = hname;
+  const mobHostEl = document.getElementById('mobile-hostname');
+  if (mobHostEl) mobHostEl.textContent = `@${hname}`;
 
   const grid = document.getElementById('dash-services');
   grid.innerHTML = data.services.map(s => {

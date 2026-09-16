@@ -7,136 +7,212 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <nav>
-    <div class="brand">Server Manager<span id="hostname"></span></div>
-    <button class="active" data-tab="dashboard">Dashboard</button>
-    <button data-tab="services">Services</button>
-    <button data-tab="plugins">Plugins</button>
-    <button data-tab="router">9Router</button>
-    <button data-tab="setup">Setup</button>
-  </nav>
-
-  <div class="container">
-    <!-- Dashboard Tab -->
-    <div id="tab-dashboard" class="tab active">
-      <div class="card">
-        <h2>Services</h2>
-        <div class="svc-grid" id="dash-services"></div>
-      </div>
-      <div class="card">
-        <h2>Dependencies</h2>
-        <div class="svc-grid" id="dash-deps"></div>
-      </div>
-      <div class="card">
-        <h2>Installed Plugins</h2>
-        <div id="dash-plugins"></div>
-      </div>
+  <!-- Mobile Header -->
+  <header class="mobile-header">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Navigation">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="mobile-brand">
+      <span class="brand-title">Server Manager</span>
+      <span class="brand-host" id="mobile-hostname"></span>
     </div>
+    <div class="header-status-dot active" title="System Online"></div>
+  </header>
 
-    <!-- Services Tab -->
-    <div id="tab-services" class="tab">
-      <div class="card">
-        <h2>Managed Services</h2>
-        <div class="svc-list" id="svc-list"></div>
-      </div>
-      <div class="card">
-        <h2>Jump to Port</h2>
-        <form class="install-form" onsubmit="jumpToPort(event)">
-          <input id="port-input" type="number" min="1" max="65535" placeholder="Port number" required>
-          <button class="btn" type="submit">Go</button>
-        </form>
-      </div>
-    </div>
+  <!-- Backdrop for mobile drawer -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
-    <!-- Plugins Tab -->
-    <div id="tab-plugins" class="tab">
-      <div class="card">
-        <h2>Installed</h2>
-        <div class="plugin-list" id="installed-plugins"></div>
-      </div>
-      <div class="card">
-        <h2>Registry</h2>
-        <div class="plugin-list" id="registry-plugins"></div>
-      </div>
-      <div class="card">
-        <h2>MCP Client Config</h2>
-        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem">
-          Paste into <code>~/.claude.json</code> or your MCP client. Credentials are inlined,
-          so treat it as a secret.
-        </p>
-        <button class="btn btn-sm" onclick="showMcpConfig()">Show config</button>
-        <pre id="mcp-config" class="code-block" hidden></pre>
-      </div>
-      <div class="card">
-        <h2>Install from Source</h2>
-        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem">
-          Git URL, local path, or npm:package-name
-        </p>
-        <form class="install-form" id="install-form">
-          <input name="source" type="text" placeholder="https://github.com/… or /path/to/mcp or npm:pkg" required>
-          <input name="id" type="text" placeholder="plugin-id" required style="max-width:120px">
-          <button class="btn" type="submit">Install</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- 9Router Tab -->
-    <div id="tab-router" class="tab">
-      <div class="card">
-        <h2>Quota Policy Status</h2>
-        <div id="router-policy"></div>
-      </div>
-      <div class="card">
-        <h2>Complexity Tiers</h2>
-        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem">
-          Drag models to reorder within a tier, or between tiers. Changes save automatically.
-        </p>
-        <div id="router-tiers"></div>
-        <div style="margin-top:0.75rem">
-          <button class="btn btn-sm btn-outline" onclick="addTier()">+ New Tier</button>
+  <div class="app-layout">
+    <!-- Left Navigation Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-row">
+          <div class="brand-logo">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          </div>
+          <div class="brand-info">
+            <span class="brand-title">Server Manager</span>
+            <span class="brand-host" id="hostname"></span>
+          </div>
         </div>
       </div>
-      <div class="card">
-        <h2>Provider Connections</h2>
-        <div id="router-connections"></div>
-      </div>
-    </div>
 
-    <!-- Setup Tab -->
-    <div id="tab-setup" class="tab">
-      <div class="card">
-        <h2>Dependency Status</h2>
-        <div id="dep-list" class="svc-list"></div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-tab="services">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>Services</span>
+        </button>
+        <button class="nav-item" data-tab="plugins">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 8v6M2 12h6m8 0h6"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Plugins</span>
+        </button>
+        <button class="nav-item" data-tab="router">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <span>9Router</span>
+        </button>
+        <button class="nav-item" data-tab="setup">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Setup</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-chip">
+          <span class="status-pulse"></span>
+          <span class="status-text">Tailscale Mesh Active</span>
+        </div>
       </div>
-      <div class="card">
-        <h2>Server Info</h2>
-        <div id="server-info" style="font-size:0.85rem;color:var(--muted)"></div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="container">
+        <!-- Dashboard Tab -->
+        <div id="tab-dashboard" class="tab active">
+          <div class="tab-header">
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Server overview and system health monitoring</p>
+          </div>
+          <div class="card">
+            <h2>Core Services</h2>
+            <div class="svc-grid" id="dash-services"></div>
+          </div>
+          <div class="card">
+            <h2>System Dependencies</h2>
+            <div class="svc-grid" id="dash-deps"></div>
+          </div>
+          <div class="card">
+            <h2>Installed Plugins</h2>
+            <div id="dash-plugins"></div>
+          </div>
+        </div>
+
+        <!-- Services Tab -->
+        <div id="tab-services" class="tab">
+          <div class="tab-header">
+            <h1 class="page-title">Services</h1>
+            <p class="page-subtitle">Manage systemd user services and background processes</p>
+          </div>
+          <div class="card">
+            <h2>Managed Services</h2>
+            <div class="svc-list" id="svc-list"></div>
+          </div>
+          <div class="card">
+            <h2>Jump to Port</h2>
+            <form class="install-form" onsubmit="jumpToPort(event)">
+              <input id="port-input" type="number" min="1" max="65535" placeholder="Port number (e.g. 20128)" required>
+              <button class="btn" type="submit">Open Port</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Plugins Tab -->
+        <div id="tab-plugins" class="tab">
+          <div class="tab-header">
+            <h1 class="page-title">MCP Plugins</h1>
+            <p class="page-subtitle">Manage Model Context Protocol integrations and multi-account connections</p>
+          </div>
+          <div class="card">
+            <h2>Installed Plugins</h2>
+            <div class="plugin-list" id="installed-plugins"></div>
+          </div>
+          <div class="card">
+            <h2>Plugin Registry Catalog</h2>
+            <div class="plugin-list" id="registry-plugins"></div>
+          </div>
+          <div class="card">
+            <h2>MCP Client Configuration</h2>
+            <p class="card-caption">
+              Paste directly into <code>~/.claude.json</code>, Claude Desktop, or your MCP client. Credentials are automatically inlined.
+            </p>
+            <button class="btn btn-sm" onclick="showMcpConfig()">Show JSON Config</button>
+            <pre id="mcp-config" class="code-block" hidden></pre>
+          </div>
+          <div class="card">
+            <h2>Install Plugin from Source</h2>
+            <p class="card-caption">
+              Install any Git repository, local filesystem path, or <code>npm:&lt;package&gt;</code> package.
+            </p>
+            <form class="install-form" id="install-form">
+              <input name="source" type="text" placeholder="https://github.com/… or /path/to/mcp or npm:pkg" required>
+              <input name="id" type="text" placeholder="instance-id" required style="max-width:140px">
+              <button class="btn" type="submit">Install Plugin</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- 9Router Tab -->
+        <div id="tab-router" class="tab">
+          <div class="tab-header">
+            <h1 class="page-title">9Router Gateway</h1>
+            <p class="page-subtitle">Configure model complexity tiers, quota policies, and provider fallbacks</p>
+          </div>
+          <div class="card">
+            <h2>Quota Policy Status</h2>
+            <div id="router-policy"></div>
+          </div>
+          <div class="card">
+            <h2>Complexity Tiers</h2>
+            <p class="card-caption">
+              Drag models to reorder within a tier or transfer between tiers. Fallback cascades automatically from top to bottom.
+            </p>
+            <div id="router-tiers"></div>
+            <div style="margin-top:0.85rem">
+              <button class="btn btn-sm btn-outline" onclick="addTier()">+ New Complexity Tier</button>
+            </div>
+          </div>
+          <div class="card">
+            <h2>Provider Connections</h2>
+            <div id="router-connections"></div>
+          </div>
+        </div>
+
+        <!-- Setup Tab -->
+        <div id="tab-setup" class="tab">
+          <div class="tab-header">
+            <h1 class="page-title">System & Setup</h1>
+            <p class="page-subtitle">Verify host dependencies and self-healing bootstrap</p>
+          </div>
+          <div class="card">
+            <h2>Dependency Verification</h2>
+            <div id="dep-list" class="svc-list"></div>
+          </div>
+          <div class="card">
+            <h2>Host Server Info</h2>
+            <div id="server-info" style="font-size:0.85rem;color:var(--muted)"></div>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   </div>
 
+  <!-- Plugin Config Modal -->
   <div id="cfg-modal" class="modal" hidden>
     <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="cfg-title">
       <div class="modal-header">
-        <h2 id="cfg-title">Configure</h2>
-        <button class="btn btn-sm" onclick="closeConfig()" aria-label="Close">✕</button>
+        <h2 id="cfg-title">Configure Plugin</h2>
+        <button class="modal-close-btn" onclick="closeConfig()" aria-label="Close">✕</button>
       </div>
       <form id="cfg-form" onsubmit="saveConfig(event)">
         <div id="cfg-fields"></div>
         <div class="modal-footer">
-          <button type="submit" class="btn">Save</button>
-          <button type="button" class="btn btn-sm" onclick="closeConfig()">Cancel</button>
+          <button type="submit" class="btn">Save Configuration</button>
+          <button type="button" class="btn btn-outline" onclick="closeConfig()">Cancel</button>
         </div>
       </form>
     </div>
   </div>
 
-  
+  <!-- Interactive Auth Terminal Modal -->
   <div id="term-modal" class="modal" hidden>
-    <div class="modal-box" style="max-width: 650px;" role="dialog" aria-modal="true" aria-labelledby="term-title">
+    <div class="modal-box modal-lg" role="dialog" aria-modal="true" aria-labelledby="term-title">
       <div class="modal-header">
         <h2 id="term-title">Interactive Auth Terminal</h2>
-        <button class="btn btn-sm" onclick="closeAuthTerminal()" aria-label="Close">✕</button>
+        <button class="modal-close-btn" onclick="closeAuthTerminal()" aria-label="Close">✕</button>
       </div>
       <div id="term-output" class="term-screen"></div>
       <div class="term-input-row">
