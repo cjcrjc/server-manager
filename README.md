@@ -31,6 +31,8 @@ cd ~/server-manager
   - **Microsoft OneDrive** (`npm:ms-onedrive-mcp`): Multi-account OneDrive files.
   - Custom git URLs, local paths, or any `npm:<package>` name.
 - **Multi-Instance / Multi-Account MCPs**: Install multiple isolated instances of the same MCP (e.g. `onedrive-personal`, `onedrive-work`, `icloud-cam`).
+- **In-Dashboard Plugin Configuration**: Each installed plugin has a **Configure** form built from its manifest's `env` spec. Credentials are written to `plugins/<instance>/.env` at mode `600`, secrets are masked on read, and re-submitting the mask leaves the stored value untouched. No SSH needed.
+- **Connection Status Indicators**: Every plugin card shows a status dot — green (credentials present), amber (missing required fields, listed by name), red (not installed / invalid).
 - **9Router Tier Visual Editor**:
   - Drag-and-drop model reordering across arbitrary complexity tiers (`quota-simple`, `quota-smart`, `quota-complex`, or custom).
   - Drag unassigned models directly from the available provider pool.
@@ -39,15 +41,25 @@ cd ~/server-manager
 
 ## Claude Desktop / Code Integration
 
-Installed MCP plugins can be added to your Claude settings (`~/.claude.json` or `claude_desktop_config.json`):
+The dashboard generates the config for you. Plugins tab → **MCP Client Config** → *Show config*,
+then paste the block into `~/.claude.json` or `claude_desktop_config.json`. Entry paths are
+absolute and each instance's saved credentials are inlined:
 
 ```json
 {
   "mcpServers": {
     "onedrive-personal": {
+      "type": "stdio",
       "command": "node",
-      "args": ["/home/YOUR_USER/server-manager/plugins/onedrive-personal/server.mjs"]
+      "args": ["/home/YOUR_USER/server-manager/plugins/onedrive-personal/server.mjs"],
+      "env": { "MICROSOFT_CLIENT_ID": "…" }
     }
   }
 }
+```
+
+That block contains live credentials — treat it as a secret. Same data over the API:
+
+```bash
+curl -s localhost:18080/api/plugins/mcp-config
 ```
